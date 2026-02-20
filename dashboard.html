@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard | Finance Tracker</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Google Charts -->
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+
+  <style>
+    .chart-container {
+      width: 48%;
+      display: inline-block;
+      vertical-align: top;
+    }
+
+    #piechart, #barchart {
+      width: 100%;
+      height: 350px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <h2 class="logo">Finance Tracker</h2>
+  <ul class="nav-links">
+    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+    <li><a href="add-expense.html">Add Expense</a></li>
+    <li><a href="health.html">Health Concern</a></li>
+    <li><a href="set-budget.html">Set Budget</a></li>
+    <li><a href="history.html">History</a></li>
+    <li><a href="login.html">Logout</a></li>
+  </ul>
+</nav>
+
+<div class="container">
+
+  <!-- DASHBOARD TITLE -->
+  <h1 class="dashboard-title">Dashboard Overview</h1>
+
+  <!-- SUMMARY CARDS -->
+  <div class="cards">
+
+    <div class="card">
+      Total Budget <br>
+      ₹<span id="totalBudget">0</span>
+    </div>
+
+    <div class="card">
+      Spent <br>
+      ₹<span id="totalSpent">0</span>
+    </div>
+
+    <div class="card">
+      Remaining <br>
+      ₹<span id="remainingBudget">0</span>
+    </div>
+
+  </div>
+
+  <!-- CHART SECTION -->
+  <div class="chart-section">
+
+    <h2 class="chart-title">Expense Analysis</h2>
+
+    <!-- PIE CHART -->
+    <div class="chart-container">
+      <div id="piechart"></div>
+    </div>
+
+    <!-- BAR CHART -->
+    <div class="chart-container">
+      <div id="barchart"></div>
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- GOOGLE CHART SCRIPT -->
+<script>
+
+google.charts.load('current', { packages: ['corechart'] });
+google.charts.setOnLoadCallback(drawCharts);
+
+function drawCharts() {
+
+  const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+
+  let food = 0;
+  let fastFood = 0;
+  let travel = 0;
+  let shopping = 0;
+  let bills = 0;
+
+  expenses.forEach(exp => {
+
+    if (exp.category === "Food") food += Number(exp.amount);
+    if (exp.category === "Fast Food") fastFood += Number(exp.amount);
+    if (exp.category === "Travel") travel += Number(exp.amount);
+    if (exp.category === "Shopping") shopping += Number(exp.amount);
+    if (exp.category === "Bills") bills += Number(exp.amount);
+
+  });
+
+  /* PIE CHART DATA */
+
+  const pieData = google.visualization.arrayToDataTable([
+    ['Category', 'Amount'],
+    ['Food', food],
+    ['Fast Food', fastFood],
+    ['Travel', travel],
+    ['Shopping', shopping],
+    ['Bills', bills]
+  ]);
+
+  const pieOptions = {
+    title: 'Expense Distribution',
+    pieHole: 0.4,
+    legend: { position: 'top' }
+  };
+
+  const pieChart =
+    new google.visualization.PieChart(
+      document.getElementById('piechart')
+    );
+
+  pieChart.draw(pieData, pieOptions);
+
+
+  /* BAR CHART DATA */
+
+  const barData = google.visualization.arrayToDataTable([
+    ['Category', 'Amount'],
+    ['Food', food],
+    ['Fast Food', fastFood],
+    ['Travel', travel],
+    ['Shopping', shopping],
+    ['Bills', bills]
+  ]);
+
+  const barOptions = {
+    title: 'Category Wise Spending',
+    legend: { position: 'none' }
+  };
+
+  const barChart =
+    new google.visualization.ColumnChart(
+      document.getElementById('barchart')
+    );
+
+  barChart.draw(barData, barOptions);
+
+}
+
+</script>
+
+
+<!-- HEALTH SCRIPT -->
+<script src="js/health.js"></script>
+
+
+<!-- DASHBOARD DATA SCRIPT -->
+<script>
+
+const expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+const budget = Number(localStorage.getItem("budget")) || 0;
+
+let spent = 0;
+
+expenses.forEach(exp => {
+  spent += Number(exp.amount);
+});
+
+document.getElementById("totalBudget").innerText = budget;
+document.getElementById("totalSpent").innerText = spent;
+document.getElementById("remainingBudget").innerText = budget - spent;
+
+</script>
+
+
+</body>
+</html>
