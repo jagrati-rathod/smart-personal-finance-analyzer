@@ -1,36 +1,109 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Add Expense</title>
-  <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
 
+<title>Add Expense | Spendify</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body class="expense-bg">
+
+<!-- NAVBAR -->
 <nav class="navbar">
-  <h2 class="logo">Finance Tracker</h2>
-  <ul class="nav-links">
-    <li><a href="dashboard.html">Dashboard</a></li>
-    <li><a href="add-expense.html">Add Expense</a></li>
-    <li><a href="set-budget.html">Set Budget</a></li>
-    <li><a href="history.html">History</a></li>
-    <li><a href="login.html">Logout</a></li>
-    <li><a href="health.html">Health Concern</a></li>
-  </ul>
+
+<h2 class="logo">💰 Spendify</h2>
+
+<ul class="nav-links">
+
+<li><a href="dashboard.html">Dashboard</a></li>
+<li><a href="health.html">Health Concern</a></li>
+<li><a href="add-expense.html" class="active">Add Expense</a></li>
+<li><a href="set-budget.html">Set Budget</a></li>
+<li><a href="history.html">History</a></li>
+<li><a href="login.html">Logout</a></li>
+
+</ul>
+
 </nav>
 
-<h1>Add Expense</h1>
 
-<form class="form">
-  <input type="text" placeholder="Expense Name">
-  <input type="number" placeholder="Amount">
-  <select>
-    <option>Food</option>
-    <option>Travel</option>
-    <option>Shopping</option>
-    <option>Other</option>
-  </select>
-  <button>Add</button>
+<!-- MAIN SECTION -->
+
+<div class="expense-page">
+
+<div class="expense-right">
+
+</div>
+
+
+<div class="form-card">
+
+<h2>💸 Add New Expense</h2>
+
+<p class="subtitle">Control your spending</p>
+
+<form class="form" onsubmit="addExpense(event)">
+
+<input type="text" id="name" placeholder="Expense Name" required>
+
+<input type="number" id="amount" placeholder="Amount" required>
+
+<select id="category">
+
+<option>Food</option>
+<option>Fast Food</option>
+<option>Travel</option>
+<option>Shopping</option>
+<option>Bills</option>
+
+</select>
+
+<button type="submit">Add Expense</button>
+
 </form>
+
+</div>
+
+</div>
+
+
+<script src="js/storage.js"></script>
+
+<script>
+
+function addExpense(e){
+
+e.preventDefault()
+
+const name=document.getElementById("name").value
+
+const amount=document.getElementById("amount").value
+
+const category=document.getElementById("category").value
+
+const expense={
+
+name:name,
+
+amount:amount,
+
+category:category,
+
+date:new Date().toLocaleDateString()
+
+}
+
+saveExpense(expense)
+
+alert("✅ Expense Added Successfully")
+
+window.location.href="dashboard.html"
+
+}
+
+</script>
 
 </body>
 </html>

@@ -1,29 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Set Budget</title>
-  <link rel="stylesheet" href="css/style.css">
+<title>Set Budget | Finance Tracker</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
+<!-- NAVBAR -->
 <nav class="navbar">
   <h2 class="logo">Finance Tracker</h2>
   <ul class="nav-links">
     <li><a href="dashboard.html">Dashboard</a></li>
+     <li><a href="health.html">Health Concern</a></li>
     <li><a href="add-expense.html">Add Expense</a></li>
-    <li><a href="set-budget.html">Set Budget</a></li>
+    <li><a href="set-budget.html" class="active">Set Budget</a></li>
     <li><a href="history.html">History</a></li>
     <li><a href="login.html">Logout</a></li>
-    <li><a href="health.html">Health Concern</a></li>
   </ul>
 </nav>
 
-<h1>Set Budget</h1>
+<div class="container">
 
-<form class="form">
-  <input type="number" placeholder="Monthly Budget">
-  <button>Save Budget</button>
+<h1>Set Monthly Budget</h1>
+
+<form class="form" onsubmit="setBudget(event)">
+
+  <input type="number" id="budget" placeholder="Enter Monthly Budget" required>
+
+  <button type="submit">Save Budget</button>
+
 </form>
+
+</div>
+
+<script src="js/storage.js"></script>
+
+<script>
+
+function setBudget(e){
+
+  e.preventDefault()
+
+  const budget = document.getElementById("budget").value
+
+  saveBudget(budget)
+
+  alert("Budget Saved Successfully ")
+
+  window.location.href="dashboard.html"
+
+}
+
+</script>
 
 </body>
 </html>
