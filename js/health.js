@@ -1,24 +1,45 @@
-function checkHealthAlert() {
-  const health = document.getElementById("healthConcern").value;
+function checkHealthAlert(){
 
-  // demo: assume last added expense category
-  const lastExpenseCategory = localStorage.getItem("expenseCategory");
+const health =
+localStorage.getItem("healthConcern")
 
-  if (!health || !lastExpenseCategory) {
-    alert("Please select health concern and add an expense first.");
-    return;
-  }
+const expenses =
+JSON.parse(localStorage.getItem("expenses")) || []
 
-  if (health === "digestion" && lastExpenseCategory === "fastfood") {
-    alert("⚠️ Alert: Fast food spending may worsen digestion problems.");
-  } 
-  else if (health === "diabetes" && lastExpenseCategory === "fastfood") {
-    alert("⚠️ Alert: Junk food increases diabetes risk.");
-  }
-  else if (health === "heart" && lastExpenseCategory === "fastfood") {
-    alert("⚠️ Alert: Fast food may affect heart health.");
-  }
-  else {
-    alert("✅ No health risk detected. Good choice!");
-  }
+let fastFoodTotal = 0
+
+expenses.forEach(exp=>{
+
+if(exp.category === "Fast Food"){
+
+fastFoodTotal += Number(exp.amount)
+
+}
+
+})
+
+if(health === "digestion" && fastFoodTotal > 1000){
+
+alert("⚠️ Health Alert: Fast food may worsen digestion!")
+
+}
+
+else if(health === "diabetes" && fastFoodTotal > 1000){
+
+alert("⚠️ Health Alert: Fast food increases diabetes risk!")
+
+}
+
+else if(health === "heart" && fastFoodTotal > 1000){
+
+alert("⚠️ Health Alert: Fast food affects heart health!")
+
+}
+
+else if(health === "weight" && fastFoodTotal > 1500){
+
+alert("⚠️ Health Alert: Fast food may affect weight control!")
+
+}
+
 }
