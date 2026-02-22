@@ -2,8 +2,9 @@
 <html>
 <head>
   <title>Login | Finance Tracker</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="../css/style.css">
 </head>
+
 <body class="login-body">
 
 <div class="login-card">
@@ -11,21 +12,33 @@
   <p class="tagline">Track your money smartly</p>
 
   <form onsubmit="return loginUser()">
-    <input type="text" placeholder="Username" required>
-    <input type="password" placeholder="Password" required>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
 
     <button type="submit">Login</button>
   </form>
 
   <p class="forgot">
-    <a href="#">Forgot Password?</a>
+    <a href="#" onclick="openForgot()">Forgot Password?</a>
   </p>
 
   <p class="signup">
-    Don’t have an account? <span>Sign up</span>
+    Don’t have an account? <span onclick="signupUser()">Sign up</span>
   </p>
 </div>
 
-<script src="js/login.js"></script>
+<!-- ===== FORGOT PASSWORD MODAL ===== -->
+
+<div id="forgotModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeForgot()">&times;</span>
+    <h3>Reset Password</h3>
+    <input type="email" id="resetEmail" placeholder="Enter your email">
+    <button onclick="resetPassword()">Send Reset Link</button>
+  </div>
+</div>
+
+<script src="../js/login.js"></script>
+
 </body>
 </html>
