@@ -1,21 +1,26 @@
 /* ================= GLOBAL ================= */
 
-body {
+* {
+  box-sizing: border-box;
+}
+
+html, body {
   margin: 0;
+  padding: 0;
+  overflow-x: hidden;
   font-family: 'Poppins', sans-serif;
   background: linear-gradient(135deg, #eef2ff, #f8fafc);
 }
 
 
-/* ================= PREMIUM NAVBAR ================= */
+/* ================= NAVBAR FIXED ================= */
 
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 40px;
+  padding: 18px 50px;
   background: linear-gradient(90deg,#4f46e5,#6366f1,#7c3aed);
-  backdrop-filter: blur(10px);
   box-shadow: 0 8px 25px rgba(0,0,0,0.15);
   position: sticky;
   top: 0;
@@ -24,48 +29,48 @@ body {
 
 .logo {
   color: white;
-  font-size: 24px;
-  font-weight: bold;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .nav-links {
   display: flex;
-  gap: 18px;
+  align-items: center;
+  gap: 22px;
 }
 
-.navbar ul {
+.nav-links li {
   list-style: none;
-  margin: 0;
-  padding: 0;
 }
 
 .nav-links a {
   color: white;
+  font-size: 16px;
+  font-weight: 500;
   text-decoration: none;
-  padding: 8px 16px;
+  padding: 8px 14px;
   border-radius: 8px;
-  background: rgba(255,255,255,0.1);
-  transition: all 0.3s ease;
+  transition: 0.3s ease;
 }
 
 .nav-links a:hover {
   background: white;
   color: #4f46e5;
-  transform: translateY(-2px);
 }
 
 .nav-links a.active {
   background: white;
   color: #4f46e5;
-  font-weight: bold;
+  font-weight: 600;
 }
-
 
 /* ================= CONTAINER ================= */
 
 .container {
   width: 90%;
-  margin: auto;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 
@@ -83,7 +88,7 @@ body {
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 25px;
   margin: 25px 0;
 }
@@ -111,7 +116,17 @@ body {
 }
 
 .card:nth-child(3) {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #f43f5e, #ec4899);
+  box-shadow: 0 15px 35px rgba(236,72,153,0.4);
+}
+.card:nth-child(4) {
+  background: linear-gradient(135deg, #2563eb, #1e3a8a);
+  color: white;
+}
+
+#score {
+  font-size: 26px;
+  font-weight: bold;
 }
 
 
@@ -136,123 +151,7 @@ body {
   width: 48%;
   display: inline-block;
   margin: 10px;
-}
-
-
-/* ================= ADD EXPENSE BACKGROUND ================= */
-
-.expense-bg {
-  background:
-    linear-gradient(rgba(79,70,229,0.1),rgba(79,70,229,0.2)),
-    url("https://images.unsplash.com/photo-1554224155-6726b3ff858f");
-  background-size: cover;
-  background-position: center;
-  min-height: 100vh;
-}
-
-
-/* ================= EXPENSE PAGE LAYOUT ================= */
-
-.expense-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 60px;
-  margin-top: 50px;
-  flex-wrap: wrap;
-}
-
-
-/* ================= LEFT TEXT ================= */
-
-.expense-left {
-  width: 400px;
-}
-
-.expense-left h1 {
-  color: #4f46e5;
-  font-size: 32px;
-}
-
-.expense-left p {
-  color: gray;
-  margin-bottom: 20px;
-}
-
-.expense-img {
-  width: 200px;
-  margin-top: 20px;
-  animation: float 3s infinite ease-in-out;
-}
-
-
-/* ================= FLOAT ANIMATION ================= */
-
-@keyframes float {
-
-  0% { transform: translateY(0px); }
-
-  50% { transform: translateY(-10px); }
-
-  100% { transform: translateY(0px); }
-
-}
-
-
-/* ================= FORM CARD ================= */
-
-.form-card {
-  width: 400px;
-  background: white;
-  padding: 35px;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-  text-align: center;
-  transition: 0.3s;
-}
-
-.form-card:hover {
-  transform: translateY(-5px);
-}
-
-.form-card h2 {
-  margin-bottom: 5px;
-  color: #4f46e5;
-}
-
-.subtitle {
-  font-size: 14px;
-  color: gray;
-  margin-bottom: 20px;
-}
-
-
-/* ================= INPUT ================= */
-
-input, select {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-}
-
-
-/* ================= BUTTON ================= */
-
-button {
-  background: linear-gradient(135deg,#4f46e5,#6366f1);
-  color: white;
-  border: none;
-  padding: 12px 18px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 15px;
-  transition: 0.3s;
-}
-
-button:hover {
-  transform: scale(1.05);
+  vertical-align: top;
 }
 
 
@@ -298,28 +197,51 @@ td, th {
   box-shadow: 0 20px 50px rgba(0,0,0,0.25);
 }
 
-
-/* ================= RESPONSIVE ================= */
-
-@media (max-width:768px){
-
-.cards{
-grid-template-columns:1fr;
+.login-card h1 {
+  margin-bottom: 10px;
+  color: #111827;
 }
 
-.chart-container{
-width:100%;
+.login-card p {
+  color: gray;
+  margin-bottom: 20px;
+  font-size: 14px;
 }
 
-.expense-page{
-flex-direction:column;
+.login-card input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: 1px solid #ddd;
 }
 
-.form-card{
-width:90%;
+.login-card button {
+  width: 100%;
+  margin-top: 10px;
 }
 
+
+/* ================= BUTTON ================= */
+
+button {
+  background: linear-gradient(135deg,#4f46e5,#6366f1);
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.3s;
 }
+
+button:hover {
+  transform: scale(1.05);
+}
+
+
+/* ================= MODAL ================= */
+
 .modal {
   display: none;
   position: fixed;
@@ -327,7 +249,7 @@ width:90%;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.5);
   justify-content: center;
   align-items: center;
 }
@@ -336,12 +258,151 @@ width:90%;
   background: white;
   padding: 30px;
   border-radius: 15px;
-  width: 300px;
+  width: 320px;
   text-align: center;
+  position: relative;
 }
 
 .close {
-  float: right;
+  position: absolute;
+  right: 20px;
+  top: 15px;
   cursor: pointer;
   font-size: 20px;
+}
+
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width:768px){
+
+  .cards{
+    grid-template-columns:1fr;
+  }
+
+  .chart-container{
+    width:100%;
+  }
+
+  .navbar{
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .nav-links{
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+}
+/* ================= SET BUDGET FINAL FIX ================= */
+
+.budget-container {
+  max-width: 900px;
+  margin: 80px auto;
+  background: white;
+  padding: 50px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+}
+
+.budget-container h2 {
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 40px;
+  color: #111827;
+}
+
+.budget-top {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.budget-top input,
+.budget-top select {
+  padding: 14px 18px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  min-width: 230px;
+}
+
+.budget-top button {
+  padding: 14px 24px;
+  font-size: 16px;
+}
+
+.budget-display {
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 30px;
+  font-weight: 500;
+}
+
+.category-section h3 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.category {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+}
+
+.category input {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.category button {
+  padding: 8px 16px;
+}
+
+.subcategory {
+  margin-left: 20px;
+  color: #6b7280;
+  font-size: 14px;
+}
+/* ================= HEALTH PAGE FIX ================= */
+
+.form-card {
+  background: white;
+  padding: 50px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+  max-width: 600px;
+  margin: 80px auto;
+  text-align: center;
+}
+
+.form-card h2 {
+  font-size: 32px;
+  margin-bottom: 15px;
+  color: #111827;
+}
+
+.subtitle {
+  font-size: 18px;
+  margin-bottom: 40px;
+  color: #4b5563;
+}
+
+.form select {
+  padding: 14px 18px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  min-width: 250px;
+}
+
+.form button {
+  padding: 14px 24px;
+  font-size: 16px;
 }

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register - Finance Tracker</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/login.js" defer></script>
+</head>
+
+<body class="login-body">
+
+  <div class="login-card">
+    <h1>Create Account</h1>
+    <p>Start tracking your money smartly</p>
+
+    <form onsubmit="return registerUser()">
+      <input type="text" id="regUsername" placeholder="Username" required>
+      <input type="password" id="regPassword" placeholder="Password" required>
+      <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+
+      <button type="submit">Register</button>
+    </form>
+
+    <p style="margin-top:15px;">
+      Already have an account? 
+      <a href="login.html">Login</a>
+    </p>
+  </div>
+
+</body>
+</html>

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Set Budget | Finance Tracker</title>
 <link rel="stylesheet" href="../css/style.css">
 <script src="../js/storage.js"></script>
@@ -8,12 +10,11 @@
 
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar">
   <h2 class="logo">Finance Tracker</h2>
   <ul class="nav-links">
     <li><a href="dashboard.html">Dashboard</a></li>
-     <li><a href="health.html">Health Concern</a></li>
+    <li><a href="health.html">Health Concern</a></li>
     <li><a href="add-expense.html">Add Expense</a></li>
     <li><a href="set-budget.html" class="active">Set Budget</a></li>
     <li><a href="history.html">History</a></li>
@@ -22,37 +23,60 @@
 </nav>
 
 <div class="container">
+  <h1>Set Your Budget</h1>
 
-<h1>Set Monthly Budget</h1>
+  <!-- Total Budget Section -->
+  <form class="form" onsubmit="saveBudgetCustom(event)">
+    <input type="number" id="budgetAmount" placeholder="Enter total budget" required>
+    <select id="budgetType">
+        <option value="Daily">Daily</option>
+        <option value="Weekly">Weekly</option>
+        <option value="Monthly" selected>Monthly</option>
+    </select>
+    <button type="submit">Save Total Budget</button>
+  </form>
 
-<form class="form" onsubmit="setBudget(event)">
+  <div class="budget-display" id="budgetDisplay">
+    Total Budget: ₹<span id="currentAmount">0</span> (<span id="currentType">Monthly</span>)
+  </div>
+<div class="budget-container">
 
-  <input type="number" id="budget" placeholder="Enter Monthly Budget" required>
+  <h2>Set Your Budget</h2>
 
-  <button type="submit">Save Budget</button>
+  <!-- Total Budget Section -->
+  <form class="budget-top" onsubmit="saveBudgetCustom(event)">
+    <input type="number" id="budgetAmount" placeholder="Enter total budget" required>
 
-</form>
+    <select id="budgetType">
+        <option value="Daily">Daily</option>
+        <option value="Weekly">Weekly</option>
+        <option value="Monthly" selected>Monthly</option>
+    </select>
+
+    <button type="submit">Save Total Budget</button>
+  </form>
+
+  <div class="budget-display" id="budgetDisplay">
+    Total Budget: ₹<span id="currentAmount">0</span>
+    (<span id="currentType">Monthly</span>)
+  </div>
+
+  <!-- Categories Section -->
+  <div class="category-section">
+    <h3>Category Budgets</h3>
+    <div id="categoryList"></div>
+  </div>
+
+  <!-- Add Custom Category -->
+  <div class="category-row">
+    <input type="text" id="newCategory" placeholder="Add new category">
+    <button onclick="addCategory()">Add Category</button>
+  </div>
 
 </div>
-
-<script src="js/storage.js"></script>
-
-<script>
-
-function setBudget(e){
-
-  e.preventDefault()
-
-  const budget = document.getElementById("budget").value
-
-  saveBudget(budget)
-
-  alert("Budget Saved Successfully ")
-
-  window.location.href="dashboard.html"
-
-}
-
+<strong>${cat}</strong>
+      <input type="number" placeholder="Set limit for ${cat}" id="budget_${cat}" value="${categoryBudgets[cat] || ''}">
+      <button onclick="saveCategoryBudget('${cat}')">Save Limit</button>
 </script>
 
 </body>

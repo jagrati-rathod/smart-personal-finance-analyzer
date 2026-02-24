@@ -2,10 +2,10 @@
 <html>
 <head>
 <title>Dashboard | Finance Tracker</title>
-<link rel="stylesheet" href="../css/style.css">
-<script src="../js/storage.js"></script>
 
-<!-- Google Charts -->
+<link rel="stylesheet" href="../css/style.css">
+
+<script src="../js/storage.js"></script>
 <script src="https://www.gstatic.com/charts/loader.js"></script>
 
 </head>
@@ -47,59 +47,66 @@
     ₹<span id="remainingBudget">0</span>
   </div>
 
+  <div class="card">
+    Discipline Score <br>
+    <span id="score">0</span> / 100
+  </div>
+
+</div>
+
+<!-- SMART INSIGHT -->
+<div class="chart-section">
+  <h2 class="chart-title">Smart Insight</h2>
+  <p id="insight"></p>
 </div>
 
 <!-- CHARTS -->
 <div class="chart-section">
-
   <h2 class="chart-title">Expense Analysis</h2>
-
   <div id="piechart" style="width:100%; height:400px;"></div>
-
   <div id="barchart" style="width:100%; height:400px;"></div>
-
 </div>
 
 </div>
 
-<script src="js/storage.js"></script>
-<script src="js/googleCharts.js"></script>
-<script src="js/health.js"></script>
+<script src="../js/googleCharts.js"></script>
+<script src="../js/health.js"></script>
 
 <script>
 
-const expenses = getExpenses()
+/* ===== FETCH DATA USING STORAGE.JS ===== */
+
 const budget = getBudget()
-
-let spent = 0
-
-expenses.forEach(e => spent += Number(e.amount))
+const spent = calculateTotalSpent()
 
 document.getElementById("totalBudget").innerText = budget
 document.getElementById("totalSpent").innerText = spent
 document.getElementById("remainingBudget").innerText = budget - spent
 
+/* ===== DISCIPLINE SCORE ===== */
 
-/* SIMPLE AI ALERT SYSTEM */
+document.getElementById("score").innerText = calculateDisciplineScore()
 
-if(spent > budget && budget > 0){
-  setTimeout(()=>{
-    alert("⚠️ AI Alert: You are overspending your budget!")
-  },1000)
+/* ===== INVESTMENT INSIGHT ===== */
+
+document.getElementById("insight").innerText = getInvestmentInsight()
+
+/* ===== OVERSPENDING ALERT ===== */
+
+if (spent > budget && budget > 0) {
+  setTimeout(() => {
+    alert("⚠️ Overspending detected!")
+  }, 1000)
 }
 
-let fastFood = 0
+/* ===== HEALTH ALERT ===== */
 
-expenses.forEach(e=>{
-  if(e.category === "Fast Food"){
-    fastFood += Number(e.amount)
-  }
-})
+const fastFood = getCategoryTotal("Fast Food")
 
-if(fastFood > 2000){
-  setTimeout(()=>{
+if (fastFood > 2000) {
+  setTimeout(() => {
     alert("⚠️ Health Alert: High fast food spending detected!")
-  },1500)
+  }, 1500)
 }
 
 </script>

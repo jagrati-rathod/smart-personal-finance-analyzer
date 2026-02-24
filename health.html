@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Health Concern | Finance Tracker</title>
-<link rel="stylesheet" href="../css/style.css">
-<script src="../js/storage.js"></script>
+  <title>Health Concern | Finance Tracker</title>
+  <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
 
+<!-- NAVBAR -->
 <nav class="navbar">
-  <h2 class="logo">Finance Tracker</h2>
+  <h2 class="logo">💰 Finance Tracker</h2>
   <ul class="nav-links">
     <li><a href="dashboard.html">Dashboard</a></li>
     <li><a href="health.html" class="active">Health Concern</a></li>
@@ -20,49 +20,43 @@
   </ul>
 </nav>
 
+<!-- MAIN CONTENT -->
 <div class="container">
 
-<h1>Select Your Health Concern</h1>
+  <div class="form-card">
 
-<form class="form" onsubmit="saveHealth(event)">
+    <h2>🩺 Select Your Health Concern</h2>
+    <p class="subtitle">Personalize your financial tracking experience</p>
 
-<select id="healthConcern" required>
+    <form class="form" onsubmit="saveHealth(event)">
 
-<option value="">-- Select --</option>
+      <select id="healthConcern" required>
+        <option value="">-- Select --</option>
+        <option value="digestion">Digestion Problem</option>
+        <option value="diabetes">Diabetes</option>
+        <option value="heart">Heart Health</option>
+        <option value="weight">Weight Control</option>
+      </select>
 
-<option value="digestion">Digestion Problem</option>
+      <button type="submit">Save</button>
 
-<option value="diabetes">Diabetes</option>
+    </form>
 
-<option value="heart">Heart Health</option>
-
-<option value="weight">Weight Control</option>
-
-</select>
-
-<button type="submit">Save</button>
-
-</form>
+  </div>
 
 </div>
 
 <script>
-
 function saveHealth(e){
+  e.preventDefault();
 
-e.preventDefault()
+  const health = document.getElementById("healthConcern").value;
 
-const health =
-document.getElementById("healthConcern").value
+  localStorage.setItem("healthConcern", health);
 
-localStorage.setItem("healthConcern", health)
-
-alert("Health concern saved ")
-
-window.location.href="dashboard.html"
-
+  alert("✅ Health concern saved successfully");
+  window.location.href = "dashboard.html";
 }
-
 </script>
 
 </body>

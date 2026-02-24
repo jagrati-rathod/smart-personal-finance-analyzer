@@ -1,12 +1,35 @@
 function loginUser() {
 
-  const username = document.getElementById("username").value.trim()
-  const password = document.getElementById("password").value.trim()
+  const username = document.querySelector("input[type='text']").value.trim()
+  const password = document.querySelector("input[type='password']").value.trim()
 
-  const usernamePattern = /^[a-zA-Z0-9_]{4,15}$/
+  const storedUser = localStorage.getItem("username")
+  const storedPass = localStorage.getItem("password")
 
-  if (!usernamePattern.test(username)) {
-    alert("Username must be 4-15 characters (letters, numbers, underscore only)")
+  if (!username || !password) {
+    alert("Please fill all fields")
+    return false
+  }
+
+  if (username === storedUser && password === storedPass) {
+
+    localStorage.setItem("isLoggedIn", "true")
+    window.location.href = "dashboard.html"
+  } 
+  else {
+    alert("Invalid Username or Password")
+  }
+
+  return false
+}
+function registerUser() {
+
+  const username = document.getElementById("regUsername").value.trim()
+  const password = document.getElementById("regPassword").value.trim()
+  const confirmPassword = document.getElementById("confirmPassword").value.trim()
+
+  if (!username || !password || !confirmPassword) {
+    alert("Please fill all fields")
     return false
   }
 
@@ -15,38 +38,16 @@ function loginUser() {
     return false
   }
 
-  alert("Login Successful ✅")
-  window.location.href = "dashboard.html"
-  return false
-}
-
-
-/* ===== FORGOT PASSWORD ===== */
-
-function openForgot() {
-  document.getElementById("forgotModal").style.display = "flex"
-}
-
-function closeForgot() {
-  document.getElementById("forgotModal").style.display = "none"
-}
-
-function resetPassword() {
-
-  const email = document.getElementById("resetEmail").value
-
-  if (!email.includes("@")) {
-    alert("Enter valid email address")
-    return
+  if (password !== confirmPassword) {
+    alert("Passwords do not match")
+    return false
   }
 
-  alert("Reset link sent to your email 📩")
-  closeForgot()
-}
+  localStorage.setItem("username", username)
+  localStorage.setItem("password", password)
 
+  alert("Registration successful! Please login.")
+  window.location.href = "login.html"
 
-/* ===== SIGNUP (Demo Reset) ===== */
-
-function signupUser(){
-  alert("Signup Page Coming Soon 🚀")
+  return false
 }

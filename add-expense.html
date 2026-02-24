@@ -1,108 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-
-<title>Add Expense | Spendify</title>
-
-<link rel="stylesheet" href="../css/style.css">
-<script src="../js/storage.js"></script>
+  <title>Add Expense | Spendify</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../js/storage.js"></script>
 </head>
 
-<body class="expense-bg">
+<body>
 
 <!-- NAVBAR -->
 <nav class="navbar">
+  <h2 class="logo">💰 Spendify</h2>
 
-<h2 class="logo">💰 Spendify</h2>
-
-<ul class="nav-links">
-
-<li><a href="dashboard.html">Dashboard</a></li>
-<li><a href="health.html">Health Concern</a></li>
-<li><a href="add-expense.html" class="active">Add Expense</a></li>
-<li><a href="set-budget.html">Set Budget</a></li>
-<li><a href="history.html">History</a></li>
-<li><a href="login.html">Logout</a></li>
-
-</ul>
-
+  <ul class="nav-links">
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="health.html">Health Concern</a></li>
+    <li><a href="add-expense.html" class="active">Add Expense</a></li>
+    <li><a href="set-budget.html">Set Budget</a></li>
+    <li><a href="history.html">History</a></li>
+    <li><a href="login.html">Logout</a></li>
+  </ul>
 </nav>
 
+<!-- MAIN CONTENT -->
+<div class="container">
 
-<!-- MAIN SECTION -->
+  <div class="form-card">
 
-<div class="expense-page">
+    <h2>💸 Add New Expense</h2>
+    <p class="subtitle">Control your spending</p>
 
-<div class="expense-right">
+    <form class="form" onsubmit="addExpense(event)">
 
-</div>
+      <input type="text" id="name" placeholder="Expense Name" required>
 
+      <input type="number" id="amount" placeholder="Amount" required>
 
-<div class="form-card">
+      <select id="category" required>
+        <option value="">Select Category</option>
+        <option>Food</option>
+        <option>Fast Food</option>
+        <option>Travel</option>
+        <option>Shopping</option>
+        <option>Bills</option>
+      </select>
 
-<h2>💸 Add New Expense</h2>
+      <button type="submit">Add Expense</button>
 
-<p class="subtitle">Control your spending</p>
+    </form>
 
-<form class="form" onsubmit="addExpense(event)">
-
-<input type="text" id="name" placeholder="Expense Name" required>
-
-<input type="number" id="amount" placeholder="Amount" required>
-
-<select id="category">
-
-<option>Food</option>
-<option>Fast Food</option>
-<option>Travel</option>
-<option>Shopping</option>
-<option>Bills</option>
-
-</select>
-
-<button type="submit">Add Expense</button>
-
-</form>
+  </div>
 
 </div>
-
-</div>
-
-
-<script src="js/storage.js"></script>
 
 <script>
-
 function addExpense(e){
+  e.preventDefault();
 
-e.preventDefault()
+  const name = document.getElementById("name").value;
+  const amount = document.getElementById("amount").value;
+  const category = document.getElementById("category").value;
 
-const name=document.getElementById("name").value
+  const expense = {
+    name: name,
+    amount: amount,
+    category: category,
+    date: new Date().toLocaleDateString()
+  };
 
-const amount=document.getElementById("amount").value
+  saveExpense(expense);
 
-const category=document.getElementById("category").value
-
-const expense={
-
-name:name,
-
-amount:amount,
-
-category:category,
-
-date:new Date().toLocaleDateString()
-
+  alert("✅ Expense Added Successfully");
+  window.location.href = "dashboard.html";
 }
-
-saveExpense(expense)
-
-alert("✅ Expense Added Successfully")
-
-window.location.href="dashboard.html"
-
-}
-
 </script>
 
 </body>
