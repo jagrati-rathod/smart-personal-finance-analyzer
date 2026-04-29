@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Spendify</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <div id="sidebar-container"></div>
+
+    <main class="main-content">
+      <div class="header">
+        <div>
+          <h2 id="welcome-msg">Dashboard</h2>
+          <p>Here's your financial overview.</p>
+        </div>
+      </div>
+
+      <div class="glass-panel mb-4" id="insight-box" style="display: none; border-left: 4px solid var(--primary);">
+        <!-- Dynamic Recommendation inserted here -->
+      </div>
+
+      <div class="stats-grid">
+        <div class="glass-panel stat-card">
+          <div class="stat-icon primary"><i class="fa-solid fa-piggy-bank"></i></div>
+          <div class="stat-details">
+            <h3>Total Budget</h3>
+            <p id="total-budget">$0.00</p>
+          </div>
+        </div>
+        <div class="glass-panel stat-card">
+          <div class="stat-icon danger"><i class="fa-solid fa-money-bill-wave"></i></div>
+          <div class="stat-details">
+            <h3>Total Expenses</h3>
+            <p id="total-expenses">$0.00</p>
+          </div>
+        </div>
+        <div class="glass-panel stat-card">
+          <div class="stat-icon success" id="balance-icon"><i class="fa-solid fa-wallet"></i></div>
+          <div class="stat-details">
+            <h3>Remaining Balance</h3>
+            <p id="remaining-balance">$0.00</p>
+          </div>
+        </div>
+        <div class="glass-panel stat-card">
+          <div class="stat-icon w-auto px-3 text-white" id="discipline-icon" style="background: var(--success); font-weight: bold;">
+            100
+          </div>
+          <div class="stat-details">
+            <h3>Discipline Score</h3>
+            <p id="discipline-text">Excellent</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="charts-grid mt-4">
+        <div class="glass-panel">
+          <h3>Expense Distribution</h3>
+          <div class="chart-container mt-3">
+            <canvas id="pieChart"></canvas>
+          </div>
+        </div>
+        <div class="glass-panel">
+          <h3>Category Wise Expenses</h3>
+          <div class="chart-container mt-3">
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/charts.js"></script>
+  <script>
+    (async () => {
+      const user = await window.UI.checkAuth(true);
+      if (!user) return;
+      window.UI.injectSidebar('dashboard');
+
+      document.getElementById('welcome-msg').innerText = `Welcome, ${user.name}!`;
+
+      const budget = user.budget || 0;
+      let expenses = [];
+      try {
+        expenses = await window.API.getExpenses();
+      } catch(e) {
+        console.error(e);
+      }
+
+      const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+      const remaining = budget - totalExpenses;
+
+      document.getElementById('total-budget').innerText = `$${budget.toFixed(2)}`;
+      document.getElementById('total-expenses').innerText = `$${totalExpenses.toFixed(2)}`;
+      document.getElementById('remaining-balance').innerText = `$${remaining.toFixed(2)}`;
+
+      // Discipline Score Logic
+      let score = 0;
+      let scoreText = '';
+      let scoreColor = '';
+
+      if (budget === 0) {
+        score = 0;
+        scoreText = 'Set a Budget First';
+        scoreColor = 'var(--warning)';
+      } else {
+        const spentPercent = (totalExpenses / budget) * 100;
+        if (spentPercent <= 80) {
+          score = 100;
+          scoreText = 'Excellent';
+          scoreColor = 'var(--success)';
+        } else if (spentPercent <= 100) {
+          score = 70;
+          scoreText = 'Moderate';
+          scoreColor = 'var(--warning)';
+        } else {
+          score = 40;
+          scoreText = 'Overspending';
+          scoreColor = 'var(--danger)';
+          document.getElementById('remaining-balance').style.color = 'var(--danger)';
+          document.getElementById('balance-icon').className = 'stat-icon danger';
+        }
+      }
+
+      const scoreIcon = document.getElementById('discipline-icon');
+      scoreIcon.innerText = score;
+      scoreIcon.style.background = scoreColor;
+      document.getElementById('discipline-text').innerText = scoreText;
+      document.getElementById('discipline-text').style.color = scoreColor;
+
+      // Smart Investment Suggestions
+      const insightBox = document.getElementById('insight-box');
+      insightBox.style.display = 'block';
+      if (budget === 0) {
+        insightBox.innerHTML = `<strong>Welcome to Spendify!</strong> Please <a href="set-budget.html">set your monthly budget</a> to unlock insights.`;
+        insightBox.style.borderLeftColor = 'var(--warning)';
+      } else if (score === 40) {
+        insightBox.innerHTML = `<strong>⚠️ Warning:</strong> You have exceeded your budget by $${Math.abs(remaining).toFixed(2)}. Cut back on non-essential spending to recover.`;
+        insightBox.style.borderLeftColor = 'var(--danger)';
+      } else if (score === 70) {
+        insightBox.innerHTML = `<strong>Caution:</strong> You are nearing your budget limit. Try to save the remaining $${remaining.toFixed(2)}.`;
+        insightBox.style.borderLeftColor = 'var(--warning)';
+      } else if (score === 100) {
+        insightBox.innerHTML = `<strong>Great Job!</strong> You are saving efficiently. Consider investing your remaining $${remaining.toFixed(2)} in a low-index fund or a SIP.`;
+        insightBox.style.borderLeftColor = 'var(--success)';
+      }
+
+      // Prepare Chart Data
+      const categoryTotals = {};
+      expenses.forEach(exp => {
+        categoryTotals[exp.category] = (categoryTotals[exp.category] || 0) + exp.amount;
+      });
+
+      const labels = Object.keys(categoryTotals);
+      const values = Object.values(categoryTotals);
+
+      if (labels.length > 0) {
+        window.ChartsAPI.renderPieChart('pieChart', labels, values);
+        window.ChartsAPI.renderBarChart('barChart', labels, values);
+      } else {
+        document.querySelector('.charts-grid').innerHTML = '<div class="glass-panel text-center" style="grid-column: 1 / -1;"><p>No expenses logged yet. Add some expenses to see your charts.</p></div>';
+      }
+    })();
+  </script>
+</body>
+</html>

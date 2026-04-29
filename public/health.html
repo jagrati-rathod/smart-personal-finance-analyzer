@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health Profile - Spendify</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+<div class="app-container">
+
+  <div id="sidebar-container"></div>
+
+  <main class="main-content">
+
+    <div class="header">
+      <div>
+        <h2>Health-Based Personalization</h2>
+        <p>Link your health goals with your spending habits.</p>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+
+      <!-- LEFT PANEL -->
+      <div class="glass-panel">
+        <h3>Link Health Profile</h3>
+        <p class="text-muted mb-4">Select a primary health concern.</p>
+
+        <form id="healthForm">
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+
+            <label class="health-option">
+              <input type="radio" name="health" value="Digestion" required>
+              <h4><i class="fa-solid fa-apple-whole"></i> Digestion</h4>
+            </label>
+
+            <label class="health-option">
+              <input type="radio" name="health" value="Diabetes">
+              <h4><i class="fa-solid fa-droplet"></i> Diabetes</h4>
+            </label>
+
+            <label class="health-option">
+              <input type="radio" name="health" value="Heart">
+              <h4><i class="fa-solid fa-heart-pulse"></i> Heart Health</h4>
+            </label>
+
+            <label class="health-option">
+              <input type="radio" name="health" value="Weight Control">
+              <h4><i class="fa-solid fa-weight-scale"></i> Weight Control</h4>
+            </label>
+
+          </div>
+
+          <button type="submit" class="btn btn-primary mt-3">Save Profile</button>
+        </form>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="glass-panel" id="advice-panel" style="display: none;">
+        <h3>Personalized Advice</h3>
+
+        <div class="mt-4 p-4" style="background: rgba(255,255,255,0.05); border-radius: 8px;">
+          <div id="advice-icon" style="font-size: 3rem; margin-bottom: 1rem;"></div>
+          <h4 id="advice-title"></h4>
+          <p id="advice-desc"></p>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/ui.js"></script>
+
+<script>
+(async () => {
+
+  const user = await window.UI.checkAuth(true);
+  if (!user) return;
+
+  window.UI.injectSidebar('health');
+
+  // ===== ADVICE DATA =====
+  const adviceDict = {
+    'Digestion': {
+      icon: '<i class="fa-solid fa-apple-whole text-secondary"></i>',
+      title: 'Focus on Fresh Produce',
+      desc: 'Spend more on fresh food and reduce junk expenses.'
+    },
+    'Diabetes': {
+      icon: '<i class="fa-solid fa-droplet text-warning"></i>',
+      title: 'Control Sugar Spending',
+      desc: 'Avoid sweets and sugary drinks.'
+    },
+    'Heart': {
+      icon: '<i class="fa-solid fa-heart-pulse text-danger"></i>',
+      title: 'Healthy Lifestyle',
+      desc: 'Reduce oily food and increase fitness spending.'
+    },
+    'Weight Control': {
+      icon: '<i class="fa-solid fa-weight-scale text-success"></i>',
+      title: 'Discipline Required',
+      desc: 'Avoid junk food and follow diet strictly.'
+    }
+  };
+
+  // ===== HEALTH ALERT SYSTEM =====
+  async function checkHealthSpending(profile) {
+
+  try {
+    const expenses = await window.API.getExpenses();
+
+    let unhealthyTotal = 0;
+
+    expenses.forEach(exp => {
+      const category = exp.category;
+
+      // 🔥 LOGIC BASED ON YOUR DROPDOWN
+      if (profile === 'Diabetes' && category === 'Food & Dining') {
+        unhealthyTotal += Number(exp.amount);
+      }
+
+      if (profile === 'Heart' && category === 'Food & Dining') {
+        unhealthyTotal += Number(exp.amount);
+      }
+
+      if (profile === 'Weight Control' && category === 'Food & Dining') {
+        unhealthyTotal += Number(exp.amount);
+      }
+
+      if (profile === 'Digestion' && category === 'Food & Dining') {
+        unhealthyTotal += Number(exp.amount);
+      }
+
+    });
+
+    // 🔥 ALERT CONDITION
+    if (unhealthyTotal > 1000) {
+      window.UI.showToast(
+        `⚠ Health Alert! ₹${unhealthyTotal} spent on Food (Unhealthy for ${profile})`,
+        'danger'
+      );
+    }
+
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+  // ===== SHOW ADVICE =====
+  function renderAdvice(profile) {
+    if (!profile) return;
+
+    const data = adviceDict[profile];
+    if (!data) return;
+
+    document.getElementById('advice-panel').style.display = 'block';
+    document.getElementById('advice-icon').innerHTML = data.icon;
+    document.getElementById('advice-title').innerText = data.title;
+    document.getElementById('advice-desc').innerText = data.desc;
+
+    // select radio
+    document.querySelectorAll('input[name="health"]').forEach(r => {
+      if (r.value === profile) r.checked = true;
+    });
+
+    checkHealthSpending(profile);
+  }
+
+  // LOAD EXISTING
+  renderAdvice(user.healthProfile);
+
+  // SAVE PROFILE
+  document.getElementById('healthForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const selected = document.querySelector('input[name="health"]:checked').value;
+
+    try {
+      await window.API.setHealthProfile(selected);
+      window.UI.showToast("Health Profile Saved!", "success");
+      renderAdvice(selected);
+    } catch (err) {
+      window.UI.showToast(err.message, "danger");
+    }
+  });
+
+})();
+</script>
+
+</body>
+</html>

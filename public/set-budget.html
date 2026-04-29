@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Budget - Spendify</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="app-container">
+    <div id="sidebar-container"></div>
+
+    <main class="main-content">
+      <div class="header">
+        <div>
+          <h2>Budget Management</h2>
+          <p>Set your overall limits and category specific boundaries.</p>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="glass-panel">
+          <h3>Total Monthly Budget</h3>
+          <p class="mb-3 text-muted">Set the maximum amount you want to spend this month.</p>
+          <form id="budgetForm">
+            <div class="form-group flex">
+              <input type="number" id="total-budget-input" class="form-control" required min="1" step="1" placeholder="e.g. 2000">
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Update Total Budget</button>
+          </form>
+          
+          <div class="mt-4 p-3" style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--success); border-radius: 4px;">
+            <p style="margin: 0;">Current Budget: <strong id="display-budget" style="color: var(--text-main); font-size: 1.2rem;">$0.00</strong></p>
+          </div>
+        </div>
+
+        <div class="glass-panel">
+          <h3>Category Limits</h3>
+          <p class="mb-3 text-muted">Restrict overspending in specific areas.</p>
+          <form id="categoryLimitForm">
+            <div class="form-group">
+              <select id="cat-limit-name" class="form-control" required>
+                <option value="" disabled selected>Select Category</option>
+                <option value="Food & Dining">Food & Dining</option>
+                <option value="Transportation">Transportation</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Housing">Housing</option>
+                <option value="Health & Fitness">Health & Fitness</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <input type="number" id="cat-limit-amount" class="form-control" required min="1" step="1" placeholder="Limit Amount ($)">
+            </div>
+            <button type="submit" class="btn btn-primary" style="background: var(--secondary);">Set Limit</button>
+          </form>
+
+          <div class="mt-4" id="limits-list">
+            <!-- Limits and progress injected here -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/ui.js"></script>
+  <script>
+    (async () => {
+      let user = await window.UI.checkAuth(true);
+      if (!user) return;
+      window.UI.injectSidebar('set-budget');
+
+      // Init display
+      document.getElementById('total-budget-input').value = user.budget || '';
+      document.getElementById('display-budget').innerText = `$${(user.budget || 0).toFixed(2)}`;
+
+      // Handle Total Budget Update
+      document.getElementById('budgetForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const amount = document.getElementById('total-budget-input').value;
+        try {
+          await window.API.setBudget(amount);
+          document.getElementById('display-budget').innerText = `$${parseFloat(amount).toFixed(2)}`;
+          window.UI.showToast('Total Budget updated!', 'success');
+          user = await window.API.getProfile(); // Refresh profile silently
+          renderLimits();
+        } catch(err) {
+          window.UI.showToast(err.message, 'danger');
+        }
+      });
+
+      // Handle Category Limits
+      document.getElementById('categoryLimitForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const cat = document.getElementById('cat-limit-name').value;
+        const amt = document.getElementById('cat-limit-amount').value;
+        try {
+          await window.API.setCategoryLimit(cat, amt);
+          window.UI.showToast(`${cat} limit set to $${amt}!`, 'success');
+          document.getElementById('categoryLimitForm').reset();
+          user = await window.API.getProfile(); // Refresh profile
+          renderLimits();
+        } catch(err) {
+          window.UI.showToast(err.message, 'danger');
+        }
+      });
+
+      async function renderLimits() {
+        const limits = user.categoryLimits || {};
+        let expenses = [];
+        try {
+          expenses = await window.API.getExpenses();
+        } catch(e) {}
+
+        const limitsList = document.getElementById('limits-list');
+        limitsList.innerHTML = '';
+
+        if (Object.keys(limits).length === 0) {
+          limitsList.innerHTML = '<p class="text-muted text-center mt-3">No category limits set.</p>';
+          return;
+        }
+
+        const spentPerCat = {};
+        expenses.forEach(e => {
+          spentPerCat[e.category] = (spentPerCat[e.category] || 0) + e.amount;
+        });
+
+        for (const [cat, limit] of Object.entries(limits)) {
+          const spent = spentPerCat[cat] || 0;
+          const progress = Math.min((spent / limit) * 100, 100);
+          let barColor = 'var(--success)';
+          if (progress > 80) barColor = 'var(--warning)';
+          if (progress >= 100) barColor = 'var(--danger)';
+
+          limitsList.innerHTML += `
+            <div class="mb-3">
+              <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.25rem;">
+                <span>${cat}</span>
+                <span style="color: ${progress >= 100 ? 'var(--danger)' : 'var(--text-muted)'}">$${spent.toFixed(2)} / $${parseFloat(limit).toFixed(2)}</span>
+              </div>
+              <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                <div style="height: 100%; width: ${progress}%; background: ${barColor}; transition: width 0.3s;"></div>
+              </div>
+            </div>
+          `;
+        }
+      }
+
+      renderLimits();
+    })();
+  </script>
+</body>
+</html>

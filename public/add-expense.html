@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Expense - Spendify</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="app-container">
+    <div id="sidebar-container"></div>
+
+    <main class="main-content">
+      <div class="header">
+        <div>
+          <h2>Add New Expense</h2>
+          <p>Record your spending to keep your budget on track.</p>
+        </div>
+      </div>
+
+      <div class="glass-panel" style="max-width: 600px;">
+        <form id="expenseForm">
+          <div class="form-group">
+            <label>Expense Name</label>
+            <input type="text" id="exp-name" class="form-control" required placeholder="e.g. Groceries">
+          </div>
+          <div class="form-group">
+            <label>Amount ($)</label>
+            <input type="number" id="exp-amount" class="form-control" required min="0.01" step="0.01" placeholder="50.00">
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="exp-category" class="form-control" required>
+              <option value="" disabled selected>Select Category</option>
+              <option value="Food & Dining">Food & Dining</option>
+              <option value="Transportation">Transportation</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Entertainment">Entertainment</option>
+              <option value="Housing">Housing</option>
+              <option value="Health & Fitness">Health & Fitness</option>
+              <option value="Utilities">Utilities</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group mb-4">
+            <label>Date</label>
+            <input type="date" id="exp-date" class="form-control" required>
+          </div>
+          
+          <button type="submit" class="btn btn-primary btn-block">Add Expense</button>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/ui.js"></script>
+  <script>
+    (async () => {
+      const user = await window.UI.checkAuth(true);
+      if (!user) return;
+      window.UI.injectSidebar('add-expense');
+
+      // Set today's date as default
+      document.getElementById('exp-date').valueAsDate = new Date();
+
+      document.getElementById('expenseForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('exp-name').value.trim();
+        const amount = document.getElementById('exp-amount').value;
+        const category = document.getElementById('exp-category').value;
+        const date = document.getElementById('exp-date').value;
+
+        try {
+          await window.API.addExpense(name, amount, category, date);
+          window.UI.showToast("Expense added successfully!", "success");
+          e.target.reset();
+          document.getElementById('exp-date').valueAsDate = new Date();
+        } catch(err) {
+          window.UI.showToast(err.message, "danger");
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
